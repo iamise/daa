@@ -1,0 +1,116 @@
+//merge.h
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+int mergeSort(int *a,int n);
+int merge(int *L,int Lsize,int *R,int Rsize,int *a);
+void display(int *a, int size);
+
+//merge.c
+
+#include"merge.h"
+
+int mergeSort(int *a,int size)
+{
+	if(size<=1)
+		return 0;
+	int mid=size/2;
+	int L[mid],R[size-mid];
+	int i,j,x,y,z;
+	for(i=0;i<mid;i++)
+		L[i]=a[i];
+	for(i=mid,j=0;i<size;i++,j++)
+		R[j]=a[i];
+	x=mergeSort(L,mid);				//Merge and sort left sub-array
+	y=mergeSort(R,size-mid);		//Merge and sort right sub-array
+	z=merge(L,mid,R,size-mid,a);	//Merge both sub-arrays
+	return x+y+z;
+}
+
+int merge(int *L,int Lsize,int *R,int Rsize,int *a)
+{
+	int k,i,j,x=0;
+	i=j=k=0;
+	while(i<Lsize && j<Rsize)
+	{
+		x++;			//No of comparisons
+		if(L[i]<=R[j])
+			a[k]=L[i++];
+		else
+			a[k]=R[j++];
+		k++;
+	}
+	//COpy remaining elements from sub-arrays if any 
+	while(i<Lsize)
+	{
+		a[k]=L[i];
+		k++; i++;
+	}
+	while(j<Rsize)
+	{
+		a[k]=R[j];
+		k++; j++;
+	}
+	return x;
+}
+
+	
+void display(int *a, int size)
+{
+	for(int i=0;i<size;i++)
+		printf("%d ",a[i]);
+	printf("\n");
+}
+										
+
+//main.c
+
+#include "merge.h"
+
+int main()
+{
+	int ch;
+	printf("1.Sort\n2.Complexity\nEnter your choice: ");
+	scanf("%d",&ch);
+	
+	if(ch == 1)
+	{
+		int n,*arr,i;
+		printf("Enter size of array: ");
+		scanf("%d",&n);
+		printf("Enter array elements: ");
+		arr = (int*)malloc(sizeof(int)*n);
+		for(i=0;i<n;i++)
+			scanf("%d",&arr[i]);
+		int no_c = mergeSort(arr,n);
+		printf("Sorted array: ");
+		display(arr,n);
+		printf("\nNumber of comparisions: %d\n",no_c);
+	}
+	else if(ch == 2)
+	{
+		int n = 8,*arr;
+		printf("\n%10c %10s %10s %10s %10s %10s %10s %10s %10s\n",'n',"n^2","nlogn","asc","nlogn/asc","des","nlogn/des","rd","nlogn/rd");
+		while(n <= 16384)
+		{
+			int g = n*log2(n);
+			int asc,des,rd;
+			arr = (int*)malloc(sizeof(int)*n);
+			for(int i=0;i<n;i++)
+				arr[i] = i;
+			asc = mergeSort(arr,n);
+			for(int i=n-1;i>=0;i--)
+				arr[i] = i;
+			des = mergeSort(arr,n);
+			for(int i=0;i<n;i++)
+				arr[i] = rand();
+			rd = mergeSort(arr,n);
+			printf("%10d %10d %10.3f %10d %10.3f %10d %10.3f %10d %10.3f\n",n,(n*n),(float)g,asc,(float)g/asc,des,(float)g/des,rd,(float)g/rd);
+			n *= 2;
+		}
+	}
+
+	return 0;
+}
