@@ -1,0 +1,124 @@
+//quick.c
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+void display(int *a, int size)
+{
+	for(int i=0;i<size;i++)
+		printf("%d ",a[i]);
+    printf("\n");
+}
+
+void swap(int *a, int *b)
+{
+	int c=*a;
+	*a=*b;
+	*b=c;
+}
+
+int quickSort(int *a, int start, int end)
+{
+    int pivot=start;
+    int i=start+1, j=end;
+    if(start>=end)
+    {
+        return 0;
+    }
+    int x=0,y=0,z=0;
+    while(1)
+    {
+        while(i<=end && a[i]<=a[pivot])
+        {
+            i++;x++;
+        }
+        while(a[j]>a[pivot])
+        {
+            j--;x++;
+        }
+        if(i>j)
+        	break;
+        swap(&a[i],&a[j]);
+    }
+    if(j!=pivot)
+    	swap(&a[j],&a[pivot]);
+    y = quickSort(a, start, j-1);
+    z = quickSort(a, j+1, end);
+    return x+y+z;
+}
+
+int main()
+{
+	int ch;
+	printf("1.Sort\n2.Complexity\nEnter your choice: ");
+	scanf("%d",&ch);
+	
+	if(ch == 1)
+	{
+		int n,*arr,i;
+		printf("Enter size of array: ");
+		scanf("%d",&n);
+		printf("Enter array elements: ");
+		arr = (int*)malloc(sizeof(int)*n);
+		for(i=0;i<n;i++)
+			scanf("%d",&arr[i]);
+		int no_c = quickSort(arr,0,n-1);
+		printf("Sorted array: ");
+		display(arr,n);
+		printf("\nNumber of comparisions: %d\n",no_c);
+	}
+	else if(ch == 2)
+	{
+		int n = 8,*arr;
+		printf("\n%9c %9s %9s %9s %9s %9s %9s %9s %9s\n",'n',"n^2","asc","n^2/asc","des","n^2/des","nlogn","rd","nlogn/rd");
+		while(n <= 16384)
+		{
+			int g = n*log2(n);
+			int asc,des,rd;
+			arr = (int*)malloc(sizeof(int)*n);
+			for(int i=0;i<n;i++)
+				arr[i] = i;
+			asc = quickSort(arr,0,n-1);
+			for(int i=n-1;i>=0;i--)
+				arr[i] = i;
+			des = quickSort(arr,0,n-1);
+			for(int i=0;i<n;i++)
+				arr[i] = rand();
+			rd = quickSort(arr,0,n-1);
+			printf("%9d %9d %9d %9.3f %9d %9.3f %9d %9d %9.3f\n",n,(n*n),asc,(float)(n*n)/asc,des,(float)(n*n)/des,g,rd,(float)g/rd);
+			n *= 2;
+		}
+	}
+
+	return 0;
+}
+
+/*OUTPUT
+1.Sort
+2.Complexity
+Enter your choice: 1
+Enter size of array: 4
+Enter array elements: 2 5 1 3
+Sorted array: 1 2 3 5 
+
+Number of comparisions: 4
+jayanth@jayanth-gram:~/DAA/quick$ ./a.out
+1.Sort
+2.Complexity
+Enter your choice: 2
+
+        n       n^2       asc   n^2/asc       des   n^2/des     nlogn        rd  nlogn/rd
+        8        64        28     2.286        28     2.286        24        16     1.500
+       16       256       120     2.133       120     2.133        64        43     1.488
+       32      1024       496     2.065       496     2.065       160       142     1.127
+       64      4096      2016     2.032      2016     2.032       384       366     1.049
+      128     16384      8128     2.016      8128     2.016       896      1024     0.875
+      256     65536     32640     2.008     32640     2.008      2048      2038     1.005
+      512    262144    130816     2.004    130816     2.004      4608      4714     0.978
+     1024   1048576    523776     2.002    523776     2.002     10240     11222     0.912
+     2048   4194304   2096128     2.001   2096128     2.001     22528     25078     0.898
+     4096  16777216   8386560     2.000   8386560     2.000     49152     56563     0.869
+     8192  67108864  33550336     2.000  33550336     2.000    106496    128225     0.831
+    16384 268435456 134209536     2.000 134209536     2.000    229376    271726     0.844
+*/
